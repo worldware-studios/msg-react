@@ -10,6 +10,9 @@
 # testing
 /coverage
 
+# generated API docs
+/docs
+
 # production
 /build
 

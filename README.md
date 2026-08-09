@@ -39,7 +39,7 @@ Wrap your app (or a subtree) with `MsgResourceProvider`, then render messages wi
 import { MsgResource } from '@worldware/msg'
 import { MsgResourceProvider, MsgMessage } from 'msg-react'
 
-const resource = await MsgResource.create(/* ... */)
+const resource = MsgResource.create(/* ... */)
 
 function App() {
   return (
