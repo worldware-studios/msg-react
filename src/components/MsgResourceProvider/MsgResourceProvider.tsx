@@ -1,7 +1,7 @@
 'use client'
 
 import {useEffect, useRef, useState, createContext} from 'react';
-import { type MsgResource } from '@worldware/msg';
+import { MsgResource } from '@worldware/msg';
 
 export const MsgResourceContext = createContext<MsgResource | null>(null)
 
@@ -14,21 +14,46 @@ export function MsgResourceProvider(props: MsgProviderProps) {
   const { resource, children } = props;
 
   const msgRef = useRef<HTMLDivElement>(null);
-  const [res, setRes] = useState(resource)
+  const [res, setRes] = useState<MsgResource>(resource);
   
-  useEffect(() => {
-    const closestLangAttribute: string | null | undefined = msgRef.current?.closest('[lang]')?.getAttribute('lang');
-    const navigatorLanguage: string = navigator.language;
-    const lang = closestLangAttribute ?? navigatorLanguage;
+  function detectLanguageChange(element: Element) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach(mutation => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'lang') {
+          const lang = element.getAttribute('lang') || navigator.language;
+          if (lang) {
+            translate(lang);
+          }
+        }
+      })
+    });
 
-    async function translate(langTag: string) {
-      const res = await resource.getTranslation(langTag);
-      setRes(res);
+    observer.observe(element, {attributes: true, attributeFilter: ['lang']});
+    return observer;
+  }
+
+  function getClosestElementWithLangAttribute(): Element | null | undefined {
+    return msgRef.current?.closest('[lang]');
+  }
+
+  async function translate(langTag: string) {
+    try {
+      const translated = await resource.getTranslation(langTag)
+      setRes(translated);
+    } catch (e) {
+      setRes(resource);
     }
+  }
+
+  useEffect(() => {
+    const closest = getClosestElementWithLangAttribute() || document.documentElement;
+    const lang = closest.getAttribute('lang') || navigator.language;
     if (lang) {
       translate(lang);
     }
-  }, [resource]);
+    const observer = detectLanguageChange(closest);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div ref={msgRef}>
@@ -38,4 +63,3 @@ export function MsgResourceProvider(props: MsgProviderProps) {
     </div>
   )
 }
-
