@@ -1,70 +1,112 @@
-# Getting Started with Create React App
+# msg-react
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React components for rendering messages from [`@worldware/msg`](https://www.npmjs.com/package/@worldware/msg).
 
-## Available Scripts
+## Components
 
-In the project directory, you can run:
+### `MsgResourceProvider`
 
-### `npm start`
+Provides a `MsgResource` to descendants via React context. On mount, it resolves a language tag from the nearest ancestor with a `lang` attribute, or falls back to `navigator.language`, then calls `resource.getTranslation(lang)` and updates the context with the result.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+| Prop | Type | Description |
+| --- | --- | --- |
+| `resource` | `MsgResource` | Message resource to expose and translate |
+| `children` | `React.ReactNode` | Tree that can consume the resource |
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Also exports `MsgResourceContext` if you need to read the resource directly with `useContext`.
 
-### `npm test`
+### `MsgMessage`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Looks up a message by key from `MsgResourceContext` and renders it inside a `<span>` with `lang` and `dir` from the message attributes.
 
-### `npm run build`
+| Prop | Type | Description |
+| --- | --- | --- |
+| `msgKey` | `string` | Key of the message to render |
+| `data` | `Record<string, any>` (optional) | Values passed to `message.format()` |
+| `options` | `MessageFormatOptions` (optional) | Options forwarded to `message.format()` |
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- With `data`: calls `message.format(data, options)`
+- Without `data`: calls `message.toString()`
+- Missing key or null context: renders an empty `<span>`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Usage
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Basic setup
 
-### `npm run eject`
+Wrap your app (or a subtree) with `MsgResourceProvider`, then render messages with `MsgMessage`:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```tsx
+import { MsgResource } from '@worldware/msg'
+import { MsgResourceProvider, MsgMessage } from 'msg-react'
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+const resource = await MsgResource.create(/* ... */)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+function App() {
+  return (
+    <div lang="en">
+      <MsgResourceProvider resource={resource}>
+        <h1>
+          <MsgMessage msgKey="greeting" data={{ name: 'Kat' }} />
+        </h1>
+      </MsgResourceProvider>
+    </div>
+  )
+}
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Format with data and options
 
-## Learn More
+Pass `data` (and optional `options`) to call `message.format()`:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```tsx
+<MsgMessage
+  msgKey="greeting"
+  data={{ name: 'Kat' }}
+  options={{ bidiIsolation: 'none' }}
+/>
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Plain message text
 
-### Code Splitting
+Omit `data` to render `message.toString()` instead:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```tsx
+<MsgMessage msgKey="welcome" />
+```
 
-### Analyzing the Bundle Size
+### Language resolution
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+`MsgResourceProvider` picks a language from the nearest ancestor with a `lang` attribute:
 
-### Making a Progressive Web App
+```tsx
+<div lang="fr">
+  <MsgResourceProvider resource={resource}>
+    <MsgMessage msgKey="greeting" data={{ name: 'Kat' }} />
+  </MsgResourceProvider>
+</div>
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+If no `lang` ancestor exists, it falls back to `navigator.language`.
 
-### Advanced Configuration
+### Read the resource from context
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Use `MsgResourceContext` when you need the resource outside of `MsgMessage`:
 
-### Deployment
+```tsx
+import { useContext } from 'react'
+import { MsgResourceContext } from 'msg-react'
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+function MessageCount() {
+  const resource = useContext(MsgResourceContext)
+  // use resource.get(...), etc.
+  return null
+}
+```
 
-### `npm run build` fails to minify
+## Scripts
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+| Script | Description |
+| --- | --- |
+| `npm test` | Run tests once |
+| `npm run test:watch` | Run tests in watch mode |
+| `npm run build` | Compile TypeScript to `dist/` |

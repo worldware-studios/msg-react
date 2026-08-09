@@ -1,39 +1,32 @@
 {
   "name": "msg-react",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "coverage": "vitest --coverage",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
     "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^13.5.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
+    "@vitest/coverage-v8": "^4.1.10",
+    "@worldware/msg": "^0.10.0",
+    "jsdom": "^30.0.1",
+    "messageformat": "^4.0.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
   }
 }
