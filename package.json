@@ -1,5 +1,5 @@
 {
-  "name": "@worldwar/msg-react",
+  "name": "@worldware/msg-react",
   "version": "1.0.0",
   "description": "React components for rendering messages from @worldware/msg",
   "main": "dist/index.js",
