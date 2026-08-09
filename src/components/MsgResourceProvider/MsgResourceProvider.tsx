@@ -1,7 +1,7 @@
 'use client'
 
 import {useEffect, useRef, useState, createContext} from 'react';
-import { type MsgResource } from '@worldware/msg';
+import { MsgResource } from '@worldware/msg';
 
 export const MsgResourceContext = createContext<MsgResource | null>(null)
 
@@ -14,21 +14,42 @@ export function MsgResourceProvider(props: MsgProviderProps) {
   const { resource, children } = props;
 
   const msgRef = useRef<HTMLDivElement>(null);
-  const [res, setRes] = useState(resource)
+  const [res, setRes] = useState<MsgResource>(resource);
   
-  useEffect(() => {
-    const closestLangAttribute: string | null | undefined = msgRef.current?.closest('[lang]')?.getAttribute('lang');
-    const navigatorLanguage: string = navigator.language;
-    const lang = closestLangAttribute ?? navigatorLanguage;
+  function detectLanguageChange(element: Element) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach(mutation => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'lang') {
+          const lang = element.getAttribute('lang') || navigator.language;
+          if (lang && lang !== res.attributes.lang) {
+            translate(lang);
+          }
+        }
+      })
+    });
 
-    async function translate(langTag: string) {
-      const res = await resource.getTranslation(langTag);
+    observer.observe(element, {attributes: true});
+  }
+
+  function getClosestElementWithLangAttribute(): Element | null | undefined {
+    const closest =  msgRef.current?.closest('[lang]');
+    console.log(closest?.id);
+    return closest;
+  }
+
+  async function translate(langTag: string) {
+    try {
+      const res = await resource.getTranslation(langTag)
       setRes(res);
+    } catch (e) {
+      setRes(resource);
     }
-    if (lang) {
-      translate(lang);
-    }
-  }, [resource]);
+  }
+
+  useEffect(() => {
+    const closest = getClosestElementWithLangAttribute() || document.documentElement;
+    detectLanguageChange(closest);
+  }, []);
 
   return (
     <div ref={msgRef}>
