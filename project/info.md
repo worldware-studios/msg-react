@@ -67,3 +67,9 @@ missing.
 - `.github/workflows/ci.yml` runs on every pull request and push to `main`,
   executing the Definition-of-done checks (`npx tsc --noEmit`, `npm test`,
   `npm run build`). PRs must be green here before review.
+- `.github/workflows/verify-and-release.yml` runs on every push to `main`. A
+  `verify` job runs type-check, tests, and build (plus dependency signature
+  audit); a `release` job builds again and runs `npx semantic-release` when
+  verify succeeds (GitHub release + npm publish via OIDC trusted publishing /
+  provenance). `package.json` also defines `"prepack": "npm run build"` so
+  `dist/` is always produced before `npm pack` / publish.

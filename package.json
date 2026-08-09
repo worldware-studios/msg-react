@@ -1,18 +1,46 @@
 {
-  "name": "msg-react",
+  "name": "@worldwar/msg-react",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "React components for rendering messages from @worldware/msg",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "test": "vitest --run",
     "test:watch": "vitest",
     "coverage": "vitest --coverage",
-    "build": "tsc"
+    "build": "tsc",
+    "prepack": "npm run build"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "i18n",
+    "l10n",
+    "react",
+    "messageformat",
+    "msg"
+  ],
+  "author": "Joel Sahleen",
   "license": "ISC",
   "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsahleen/msg-react.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jsahleen/msg-react/issues"
+  },
+  "homepage": "https://github.com/jsahleen/msg-react#readme",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "files": [
+    "dist"
+  ],
+  "peerDependencies": {
+    "@worldware/msg": "^0.10.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
   "devDependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^7.0.0",
@@ -26,6 +54,7 @@
     "messageformat": "^4.0.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "semantic-release": "^25.0.8",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10"
   }
