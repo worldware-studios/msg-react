@@ -21,26 +21,25 @@ export function MsgResourceProvider(props: MsgProviderProps) {
       mutations.forEach(mutation => {
         if (mutation.type === 'attributes' && mutation.attributeName === 'lang') {
           const lang = element.getAttribute('lang') || navigator.language;
-          if (lang && lang !== res.attributes.lang) {
+          if (lang) {
             translate(lang);
           }
         }
       })
     });
 
-    observer.observe(element, {attributes: true});
+    observer.observe(element, {attributes: true, attributeFilter: ['lang']});
+    return observer;
   }
 
   function getClosestElementWithLangAttribute(): Element | null | undefined {
-    const closest =  msgRef.current?.closest('[lang]');
-    console.log(closest?.id);
-    return closest;
+    return msgRef.current?.closest('[lang]');
   }
 
   async function translate(langTag: string) {
     try {
-      const res = await resource.getTranslation(langTag)
-      setRes(res);
+      const translated = await resource.getTranslation(langTag)
+      setRes(translated);
     } catch (e) {
       setRes(resource);
     }
@@ -48,7 +47,12 @@ export function MsgResourceProvider(props: MsgProviderProps) {
 
   useEffect(() => {
     const closest = getClosestElementWithLangAttribute() || document.documentElement;
-    detectLanguageChange(closest);
+    const lang = closest.getAttribute('lang') || navigator.language;
+    if (lang) {
+      translate(lang);
+    }
+    const observer = detectLanguageChange(closest);
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -59,4 +63,3 @@ export function MsgResourceProvider(props: MsgProviderProps) {
     </div>
   )
 }
-
