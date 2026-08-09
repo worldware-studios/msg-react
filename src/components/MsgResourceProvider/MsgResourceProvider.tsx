@@ -1,3 +1,5 @@
+'use client'
+
 import {useEffect, useRef, useState, createContext} from 'react';
 import { type MsgResource } from '@worldware/msg';
 
