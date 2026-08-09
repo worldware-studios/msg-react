@@ -33,7 +33,7 @@ Looks up a message by key from `MsgResourceContext` and renders it inside a `<sp
 
 ### Basic setup
 
-Wrap your app (or a subtree) with `MsgResourceProvider`, then render messages with `MsgMessage`:
+Wrap your app (or a subtree) with `MsgResourceProvider` passing in an `MsgResource` instance, then render messages with `MsgMessage`:
 
 ```tsx
 import { MsgResource } from '@worldware/msg'
