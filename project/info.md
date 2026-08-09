@@ -14,11 +14,11 @@ process in `project/process.md`. Keep it accurate — the process depends on it.
 
 ## Tech stack
 
-- **Language:** TypeScript (`strict: true`, `jsx: react-jsx`, target ES2016, module CommonJS; config in `tsconfig.json`).
+- **Language:** TypeScript (`strict: true`, `jsx: react-jsx`, target ES2016, module ESNext; config in `tsconfig.json`).
 - **Runtime:** Node.js (`.nvmrc` pins the version used by CI) + npm.
 - **UI:** React 19 (peer/dev dependency for components and tests).
 - **Test runner:** [Vitest](https://vitest.dev) with `@vitest/coverage-v8`, jsdom, and Testing Library (`@testing-library/react`). Config in `vitest.config.js`; setup in `src/test/setup.ts`.
-- **Build:** `tsc` (`npm run build` → `dist/`).
+- **Build:** [tsup](https://tsup.egoist.dev) for dual ESM/CJS bundles, plus `tsc -p tsconfig.build.json` for declaration files (`npm run build` → `dist/`). Config in `tsup.config.ts`.
 - **Key dependencies:** `@worldware/msg`, `react`, `react-dom`, `messageformat`.
 
 ## Repository structure

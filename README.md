@@ -109,4 +109,4 @@ function MessageCount() {
 | --- | --- |
 | `npm test` | Run tests once |
 | `npm run test:watch` | Run tests in watch mode |
-| `npm run build` | Compile TypeScript to `dist/` |
+| `npm run build` | Bundle ESM + CJS (and types) to `dist/` via tsup |

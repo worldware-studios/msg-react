@@ -2,13 +2,14 @@
   "name": "@worldware/msg-react",
   "version": "1.0.1",
   "description": "React components for rendering messages from @worldware/msg",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "vitest --run",
     "test:watch": "vitest",
     "coverage": "vitest --coverage",
-    "build": "tsc",
+    "build": "tsup && tsc -p tsconfig.build.json",
     "prepack": "npm run build"
   },
   "keywords": [
@@ -20,7 +21,7 @@
   ],
   "author": "Joel Sahleen",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/worldware-studios/msg-react.git"
@@ -36,6 +37,18 @@
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
   "peerDependencies": {
     "@worldware/msg": "^0.10.0",
     "react": "^19.0.0",
@@ -55,6 +68,7 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "semantic-release": "^25.0.8",
+    "tsup": "^8.5.1",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10"
   }
