@@ -1,3 +1,5 @@
+'use client'
+
 import { useContext } from 'react';
 import { type MessageFormatOptions } from 'messageformat';
 import { MsgResourceContext } from '../MsgResourceProvider/index.js'
