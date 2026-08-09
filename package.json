@@ -23,12 +23,12 @@
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/worldware/msg-react.git"
+    "url": "git+https://github.com/worldware-studios/msg-react.git"
   },
   "bugs": {
-    "url": "https://github.com/worldware/msg-react/issues"
+    "url": "https://github.com/worldware-studios/msg-react/issues"
   },
-  "homepage": "https://github.com/worldware/msg-react#readme",
+  "homepage": "https://github.com/worldware-studios/msg-react#readme",
   "publishConfig": {
     "access": "public",
     "provenance": true
