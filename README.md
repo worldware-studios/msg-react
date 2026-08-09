@@ -86,7 +86,7 @@ Omit `data` to render `message.toString()` instead:
 </div>
 ```
 
-If no `lang` ancestor exists, it falls back to `navigator.language`.
+If no `lang` ancestor exists, it falls back to the `navigator.language` setting.
 
 ### Read the resource from context
 
