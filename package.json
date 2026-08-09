@@ -1,6 +1,6 @@
 {
   "name": "@worldware/msg-react",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "React components for rendering messages from @worldware/msg",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
