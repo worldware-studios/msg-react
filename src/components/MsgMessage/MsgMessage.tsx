@@ -23,7 +23,7 @@ export function MsgMessage(props: MsgMessageProps) {
     : message?.toString();
 
   return (
-      <span lang={message?.attributes.lang} dir={message?.attributes.dir}>
+      <span className="msg" lang={message?.attributes.lang} dir={message?.attributes.dir}>
           {msg}
       </span>
   )
