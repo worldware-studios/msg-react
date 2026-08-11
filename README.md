@@ -2,6 +2,16 @@
 
 React components for rendering messages from [`@worldware/msg`](https://www.npmjs.com/package/@worldware/msg).
 
+## Installation
+
+`@worldware/msg` is a **peer dependency** of `@worldware/msg-react` (and is marked external in the build). Install both packages in your app:
+
+```bash
+npm install @worldware/msg @worldware/msg-react
+```
+
+That keeps a single shared `@worldware/msg` instance and types in the dependency tree and avoids duplicate copies.
+
 ## Components
 
 ### `MsgResourceProvider`
