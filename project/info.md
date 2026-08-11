@@ -19,7 +19,8 @@ process in `project/process.md`. Keep it accurate — the process depends on it.
 - **UI:** React 19 (peer/dev dependency for components and tests).
 - **Test runner:** [Vitest](https://vitest.dev) with `@vitest/coverage-v8`, jsdom, and Testing Library (`@testing-library/react`). Config in `vitest.config.js`; setup in `src/test/setup.ts`.
 - **Build:** [tsup](https://tsup.egoist.dev) for dual ESM/CJS bundles, plus `tsc -p tsconfig.build.json` for declaration files (`npm run build` → `dist/`). Config in `tsup.config.ts`.
-- **Key dependencies:** `@worldware/msg`, `react`, `react-dom`, `messageformat`.
+- **Key dependencies:** `@worldware/msg` (peer + dev; consumers must install it
+  alongside this package), `react`, `react-dom`, `messageformat`.
 
 ## Repository structure
 
