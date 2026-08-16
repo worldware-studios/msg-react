@@ -10,7 +10,7 @@ React components for rendering messages from [`@worldware/msg`](https://www.npmj
 npm install @worldware/msg@^0.12.0 @worldware/msg-react
 ```
 
-That keeps a single shared `@worldware/msg` instance and types in the dependency tree and avoids duplicate copies.
+That keeps a single shared `@worldware/msg` instance and types in the dependency tree and avoids duplicate copies. On 0.x, caret ranges do not include the next minor, so install a `@worldware/msg` release that satisfies this package's peer (`^0.12.0`).
 
 ## Components
 
