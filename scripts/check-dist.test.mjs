@@ -2,7 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { checkDist, directivePrologue } from './check-dist.mjs';
+import { vi } from 'vitest';
+import { checkDist, directivePrologue, runCheck } from './check-dist.mjs';
 
 describe('directivePrologue', () => {
   it('reads single- and double-quoted directives in order', () => {
@@ -53,5 +54,40 @@ describe('checkDist', () => {
 
   it('reports nothing checked for an empty dist', () => {
     expect(checkDist(dir)).toEqual({ checked: [], missing: [] });
+  });
+});
+
+describe('runCheck', () => {
+  let dir;
+  const io = () => ({ log: vi.fn(), error: vi.fn() });
+
+  beforeEach(() => {
+    dir = mkdtempSync(join(tmpdir(), 'msg-react-run-'));
+  });
+
+  afterEach(() => {
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  it('returns 0 and logs the checked bundles when all have the directive', () => {
+    writeFileSync(join(dir, 'index.mjs'), `'use client';\n`);
+    const out = io();
+    expect(runCheck(dir, out)).toBe(0);
+    expect(out.log).toHaveBeenCalledWith("check-dist: 'use client' present in dist/index.mjs.");
+    expect(out.error).not.toHaveBeenCalled();
+  });
+
+  it('returns 1 and names the bundles missing the directive', () => {
+    writeFileSync(join(dir, 'index.mjs'), `import x from 'y';\n`);
+    writeFileSync(join(dir, 'index.cjs'), `"use strict";\n`);
+    const out = io();
+    expect(runCheck(dir, out)).toBe(1);
+    expect(out.error.mock.calls[0][0]).toContain("missing 'use client' directive in dist/index.cjs, dist/index.mjs.");
+  });
+
+  it('returns 1 when no bundles were built', () => {
+    const out = io();
+    expect(runCheck(dir, out)).toBe(1);
+    expect(out.error).toHaveBeenCalledWith('check-dist: no dist/index.* bundles found; run the build first.');
   });
 });

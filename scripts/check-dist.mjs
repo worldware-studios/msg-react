@@ -3,8 +3,8 @@
 // `npm pack` / publish (via `prepack`). See worldware-studios/msg-react#22.
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const DIST = new URL('../dist/', import.meta.url);
 const BUNDLE = /^index\.(mjs|cjs|js)$/;
 
 /**
@@ -28,30 +28,43 @@ export function directivePrologue(source) {
 /**
  * Checks every bundle in `distDir`; returns the names of bundles without a
  * 'use client' directive (or all of them as missing if none exist).
- * @param {string | URL} distDir
+ * @param {string} distDir
  * @returns {{ checked: string[], missing: string[] }}
  */
 export function checkDist(distDir) {
   const checked = readdirSync(distDir).filter((f) => BUNDLE.test(f)).sort();
-  const missing = checked.filter((f) => {
-    const source = readFileSync(join(distDir instanceof URL ? distDir.pathname : distDir, f), 'utf8');
-    return !directivePrologue(source).includes('use client');
-  });
+  const missing = checked.filter(
+    (f) => !directivePrologue(readFileSync(join(distDir, f), 'utf8')).includes('use client')
+  );
   return { checked, missing };
 }
 
-if (import.meta.url === new URL(process.argv[1], 'file:').href) {
-  const { checked, missing } = checkDist(DIST);
+/**
+ * Checks `distDir` and reports the result; returns the process exit code.
+ * @param {string} distDir
+ * @param {{ log: (msg: string) => void, error: (msg: string) => void }} io
+ * @returns {0 | 1}
+ */
+export function runCheck(distDir, io = console) {
+  const { checked, missing } = checkDist(distDir);
   if (checked.length === 0) {
-    console.error('check-dist: no dist/index.* bundles found; run the build first.');
-    process.exit(1);
+    io.error('check-dist: no dist/index.* bundles found; run the build first.');
+    return 1;
   }
   if (missing.length > 0) {
-    console.error(
+    io.error(
       `check-dist: missing 'use client' directive in ${missing.map((f) => `dist/${f}`).join(', ')}.\n` +
-        "The components use hooks; without the directive RSC frameworks treat them as server code."
+        'The components use hooks; without the directive RSC frameworks treat them as server code.'
     );
-    process.exit(1);
+    return 1;
   }
-  console.log(`check-dist: 'use client' present in ${checked.map((f) => `dist/${f}`).join(', ')}.`);
+  io.log(`check-dist: 'use client' present in ${checked.map((f) => `dist/${f}`).join(', ')}.`);
+  return 0;
+}
+
+// CLI entry (`node scripts/check-dist.mjs`). Only runs when executed directly,
+// not when imported by tests (where import.meta.url may not be a file: URL).
+/* v8 ignore next 3 -- CLI entry; runCheck is tested directly. */
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  process.exitCode = runCheck(fileURLToPath(new URL('../dist/', import.meta.url)));
 }
