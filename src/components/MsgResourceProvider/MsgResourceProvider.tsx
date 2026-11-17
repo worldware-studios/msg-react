@@ -3,13 +3,23 @@
 import {useEffect, useRef, useState, createContext} from 'react';
 import { MsgResource } from '@worldware/msg';
 
+/** The resource provided by the nearest {@link MsgResourceProvider}, or `null`. */
 export const MsgResourceContext = createContext<MsgResource | null>(null)
 
-type MsgProviderProps = {
-  resource: MsgResource,
+/**
+ * Props for {@link MsgResourceProvider}.
+ * @typeParam K - Message keys of the resource. Defaults to `string`.
+ */
+export type MsgProviderProps<K extends string = string> = {
+  resource: MsgResource<K>,
   children: React.ReactNode
 }
 
+/**
+ * Provides `resource` to descendants, translated to the language of the
+ * nearest `[lang]` ancestor (or `navigator.language`), and re-translates when
+ * that `lang` attribute changes. Accepts typed and untyped resources.
+ */
 export function MsgResourceProvider(props: MsgProviderProps) {
   const { resource, children } = props;
 
