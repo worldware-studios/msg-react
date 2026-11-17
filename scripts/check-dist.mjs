@@ -5,7 +5,9 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const BUNDLE = /^index\.(mjs|cjs|js)$/;
+// Every JS output file, not just index.*: the tsup banner applies to all of
+// them (including any future chunks), so the check must too.
+const BUNDLE = /\.(mjs|cjs)$/;
 
 /**
  * Returns the directive prologue (leading string-literal statements) of a
@@ -48,7 +50,7 @@ export function checkDist(distDir) {
 export function runCheck(distDir, io = console) {
   const { checked, missing } = checkDist(distDir);
   if (checked.length === 0) {
-    io.error('check-dist: no dist/index.* bundles found; run the build first.');
+    io.error('check-dist: no .mjs/.cjs bundles found in dist/; run the build first.');
     return 1;
   }
   if (missing.length > 0) {

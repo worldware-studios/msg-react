@@ -52,6 +52,15 @@ describe('checkDist', () => {
     expect(checkDist(dir)).toEqual({ checked: ['index.cjs', 'index.mjs'], missing: ['index.mjs'] });
   });
 
+  it('also checks chunk files beside the index bundles', () => {
+    writeFileSync(join(dir, 'index.mjs'), `'use client';\nimport './chunk-AB12.mjs';`);
+    writeFileSync(join(dir, 'chunk-AB12.mjs'), `export const x = 1;`);
+    expect(checkDist(dir)).toEqual({
+      checked: ['chunk-AB12.mjs', 'index.mjs'],
+      missing: ['chunk-AB12.mjs'],
+    });
+  });
+
   it('reports nothing checked for an empty dist', () => {
     expect(checkDist(dir)).toEqual({ checked: [], missing: [] });
   });
@@ -88,6 +97,6 @@ describe('runCheck', () => {
   it('returns 1 when no bundles were built', () => {
     const out = io();
     expect(runCheck(dir, out)).toBe(1);
-    expect(out.error).toHaveBeenCalledWith('check-dist: no dist/index.* bundles found; run the build first.');
+    expect(out.error).toHaveBeenCalledWith('check-dist: no .mjs/.cjs bundles found in dist/; run the build first.');
   });
 });
