@@ -33,7 +33,9 @@ same track, with two phases reinterpreted:
   reason before the work that satisfies it.
 - **Phase 6:** instead of new e2e tests, show that the new check catches a
   regression (e.g. temporarily drop a test or add a type error, confirm the
-  gate fails, then restore).
+  gate fails, then restore). For build or packaging changes, also run
+  `npm pack`, inspect the unpacked files, and load each published format
+  (ESM and CJS) with the peer dependencies available.
 
 ### Approvals
 
