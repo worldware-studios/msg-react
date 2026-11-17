@@ -1,0 +1,57 @@
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+import { checkDist, directivePrologue } from './check-dist.mjs';
+
+describe('directivePrologue', () => {
+  it('reads single- and double-quoted directives in order', () => {
+    expect(directivePrologue(`'use client';\n"use strict";\nvar x = 1;`)).toEqual([
+      'use client',
+      'use strict',
+    ]);
+  });
+
+  it('skips leading line and block comments and blank lines', () => {
+    expect(directivePrologue(`// banner\n/* license */\n\n'use client';\nfoo();`)).toEqual([
+      'use client',
+    ]);
+  });
+
+  it('accepts a directive without a trailing semicolon', () => {
+    expect(directivePrologue(`"use client"\nimport x from 'y';`)).toEqual(['use client']);
+  });
+
+  it('stops at the first non-directive statement', () => {
+    expect(directivePrologue(`import x from 'y';\n'use client';`)).toEqual([]);
+  });
+});
+
+describe('checkDist', () => {
+  let dir;
+
+  beforeEach(() => {
+    dir = mkdtempSync(join(tmpdir(), 'msg-react-dist-'));
+  });
+
+  afterEach(() => {
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  it('passes bundles that start with the directive', () => {
+    writeFileSync(join(dir, 'index.mjs'), `'use client';\nexport {};`);
+    writeFileSync(join(dir, 'index.cjs'), `'use client';\n"use strict";\n`);
+    expect(checkDist(dir)).toEqual({ checked: ['index.cjs', 'index.mjs'], missing: [] });
+  });
+
+  it('reports bundles without the directive, ignoring non-bundle files', () => {
+    writeFileSync(join(dir, 'index.mjs'), `// src/x.tsx\nimport { useContext } from "react";`);
+    writeFileSync(join(dir, 'index.cjs'), `'use client';\n`);
+    writeFileSync(join(dir, 'index.d.ts'), `export {};`);
+    expect(checkDist(dir)).toEqual({ checked: ['index.cjs', 'index.mjs'], missing: ['index.mjs'] });
+  });
+
+  it('reports nothing checked for an empty dist', () => {
+    expect(checkDist(dir)).toEqual({ checked: [], missing: [] });
+  });
+});
