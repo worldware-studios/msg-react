@@ -1,0 +1,8 @@
+{
+  // Used only by `vitest --typecheck` (see vitest.config.js). tsconfig.json
+  // excludes *.test-d.ts(x) so they stay out of `tsc --noEmit` and the build;
+  // this config puts them back so the type-level tests are actually checked.
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"]
+}
