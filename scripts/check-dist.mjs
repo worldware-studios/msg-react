@@ -28,8 +28,9 @@ export function directivePrologue(source) {
 }
 
 /**
- * Checks every bundle in `distDir`; returns the names of bundles without a
- * 'use client' directive (or all of them as missing if none exist).
+ * Checks every `.mjs`/`.cjs` bundle in `distDir`; returns the bundles checked
+ * and those without a 'use client' directive. An empty `checked` list (nothing
+ * built) is reported as a failure by {@link runCheck}.
  * @param {string} distDir
  * @returns {{ checked: string[], missing: string[] }}
  */
