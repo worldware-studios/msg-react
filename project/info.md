@@ -29,7 +29,7 @@ Check these before starting the process; every GitHub step depends on them.
 - **Runtime:** Node.js (`.nvmrc` pins the version used by CI) + npm.
 - **UI:** React 19 (peer/dev dependency for components and tests).
 - **Test runner:** [Vitest](https://vitest.dev) with `@vitest/coverage-v8`, jsdom, and Testing Library (`@testing-library/react`). Config in `vitest.config.js`; setup in `src/test/setup.ts`.
-- **Build:** [tsup](https://tsup.egoist.dev) for dual ESM/CJS bundles, plus `tsc -p tsconfig.build.json` for declaration files (`npm run build` → `dist/`). Config in `tsup.config.ts`.
+- **Build:** [tsup](https://tsup.egoist.dev) for dual ESM/CJS bundles, plus `tsc -p tsconfig.build.json` for declaration files (`npm run build` → `dist/`). Config in `tsup.config.ts`; its `banner` re-adds `'use client'` (esbuild drops directives when bundling), and the `postbuild` script `scripts/check-dist.mjs` fails the build if any `.mjs`/`.cjs` bundle lacks it.
 - **Key dependencies:** `@worldware/msg` (peer + dev; consumers must install it
   alongside this package), `react`, `react-dom`, `messageformat`.
 
@@ -45,6 +45,9 @@ src/
   test/
     setup.ts                       # Vitest / Testing Library setup
     mocks.ts                       # Shared test mocks
+scripts/
+  check-dist.mjs                   # postbuild guard: bundles must start with 'use client'
+  check-dist.test.mjs              # Vitest tests for the guard
 dist/                              # Build output (generated, not committed)
 coverage/                          # Coverage output (generated, not committed)
 docs/                              # Generated API docs (created by the docs step)
@@ -80,7 +83,8 @@ so, and keep TSDoc comments accurate.
 
 - `.github/workflows/ci.yml` runs on every pull request and push to `main`,
   executing the Definition-of-done checks (`npx tsc --noEmit`, `npm test`,
-  `npm run build`). PRs must be green here before review.
+  `npm run build`, whose `postbuild` step verifies the `'use client'`
+  directive). PRs must be green here before review.
 - **Waiting on CI for the latest push:** right after a push,
   `gh pr checks --watch` can still report the previous commit's run. Wait on
   the run whose `headSha` matches `git rev-parse HEAD` instead:
