@@ -76,6 +76,11 @@ TypeScript 7 (the same limitation noted in `tsup.config.ts` for declaration
 bundling). Until TypeDoc supports TypeScript 7, skip the generation step, say
 so, and keep TSDoc comments accurate.
 
+**Scripts imported by tests:** under Vitest, `import.meta.url` is not a
+`file:` URL, so `fileURLToPath(import.meta.url)` at module load throws. Resolve
+paths from `import.meta.url` only inside the CLI entry, and detect direct
+execution with `import.meta.url === pathToFileURL(process.argv[1]).href`.
+
 ## Continuous integration
 
 - `.github/workflows/ci.yml` runs on every pull request and push to `main`,
