@@ -45,6 +45,16 @@ that phase pass.
   The target applies to the whole suite, not only integration/e2e tests.
 - Do not weaken or delete tests to make a change pass unless the test is proven
   wrong; if so, explain why.
+- **Prove new checks can fail.** When adding a new kind of test or check
+  (e.g. type-level `*.test-d.tsx`, a CI gate) or changing the config it relies
+  on, show that it still fails when it should — a deliberate failure or a
+  restored stub — after the last config change and before claiming it
+  passes. A check that silently stops running reports success.
+- **Bugs found while writing tests:** if a test reveals a bug outside the
+  issue's scope, do not assert the wrong behavior. Either record the correct
+  behavior with `test.fails` and a comment linking the issue (so it turns red
+  once fixed), or leave that path untested. Open a `fix:` issue rather than
+  widening the PR.
 
 ## Branches
 
@@ -89,7 +99,10 @@ traceability through the phases instead.
   commits rather than force-pushing shared history.
 - Keep PRs focused and reasonably sized; split large work into multiple PRs.
 - Meta-changes to `project/process.md` or `project/rules.md` belong in a
-  separate PR from feature work.
+  separate PR from feature work. Exception: edits that only describe tooling
+  changed in the same PR (e.g. a new command in the Definition of done) stay
+  in that PR, so the docs are never wrong on `main`. Process improvements from
+  a phase 9 retrospective still go in their own PR.
 
 ## Failure handling
 
