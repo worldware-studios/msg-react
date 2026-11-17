@@ -7,9 +7,9 @@ process in `project/process.md`. Keep it accurate — the process depends on it.
 
 - **Name:** `msg-react`
 - **Description:** React components for rendering messages from [`@worldware/msg`](https://www.npmjs.com/package/@worldware/msg).
-- **Repository:** `jsahleen/msg-react` (`https://github.com/jsahleen/msg-react.git`)
+- **Repository:** `worldware-studios/msg-react` (`git@github.com:worldware-studios/msg-react.git`)
 - **Default branch:** `main`
-- **Issue tracker:** https://github.com/jsahleen/msg-react/issues
+- **Issue tracker:** https://github.com/worldware-studios/msg-react/issues
 - **License:** ISC (see `package.json`)
 
 ## Prerequisites
@@ -67,18 +67,26 @@ Notes:
 | Coverage report    | `npm run coverage`    |
 | Build              | `npm run build`       |
 | Type-check only    | `npx tsc --noEmit`    |
-| API docs           | `npm run docs`        |
+| API docs           | blocked (see below)   |
 
-`npm run docs` runs TypeDoc over `src/index.ts` and writes the generated site
-to the git-ignored `docs/` folder; regenerate it on demand rather than
-committing it. Add the `docs` script and `typedoc` dev dependency if they are
-missing.
+**API docs are blocked on TypeScript 7.** The intended `npm run docs` (TypeDoc
+over `src/index.ts`, writing the git-ignored `docs/` folder) cannot be added
+yet: TypeDoc 0.28.x supports TypeScript only up to 6.0, and this repo uses
+TypeScript 7 (the same limitation noted in `tsup.config.ts` for declaration
+bundling). Until TypeDoc supports TypeScript 7, skip the generation step, say
+so, and keep TSDoc comments accurate.
 
 ## Continuous integration
 
 - `.github/workflows/ci.yml` runs on every pull request and push to `main`,
   executing the Definition-of-done checks (`npx tsc --noEmit`, `npm test`,
   `npm run build`). PRs must be green here before review.
+- **Waiting on CI for the latest push:** right after a push,
+  `gh pr checks --watch` can still report the previous commit's run. Wait on
+  the run whose `headSha` matches `git rev-parse HEAD` instead:
+  `gh run list --branch <branch> --limit 1 --json databaseId,headSha` (confirm
+  the SHA, retrying after a few seconds if it is the old one), then
+  `gh run watch <databaseId> --exit-status`.
 - `.github/workflows/verify-and-release.yml` runs on every push to `main`. A
   `verify` job runs type-check, tests, and build (plus dependency signature
   audit); a `release` job builds again and runs `npx semantic-release` when
