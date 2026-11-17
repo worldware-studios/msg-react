@@ -34,6 +34,9 @@ that phase pass.
 - **Comments:** explain intent and trade-offs, not what the code obviously does.
 - **Formatting:** follow the surrounding code style; do not reformat unrelated
   code in a change.
+- **Scripts** (`scripts/`, e.g. build guards) are plain ESM. Put their logic in
+  exported functions with co-located `*.test.mjs` tests, and keep the CLI
+  entry to a single guarded call. They count toward coverage like `src/`.
 
 ## Testing
 
