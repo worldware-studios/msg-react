@@ -15,6 +15,11 @@ export type MsgMessageProps<K extends string = string> = {
   options?: MessageFormatOptions
 }
 
+/**
+ * Renders the message `msgKey` from the nearest {@link MsgResourceProvider}
+ * in a `<span>` carrying the message's `lang` and `dir`. Accepts any string
+ * key; use `createMsgComponents` for keys checked against a resource.
+ */
 export function MsgMessage(props: MsgMessageProps) {
   
   const { msgKey, data, options } = props;
