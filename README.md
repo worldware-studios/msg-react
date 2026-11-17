@@ -112,7 +112,7 @@ import { MsgResourceProvider, MsgMessage, resource } from './i18n/home.js'
 
 The untyped `MsgResourceProvider` also accepts a typed resource, so you can adopt typed keys one component at a time.
 
-> **React Server Components:** the components use hooks, so render them from client modules (`'use client'`). The published bundle doesn't yet preserve the `'use client'` directive ([#22](https://github.com/worldware-studios/msg-react/issues/22)), so mark the module that imports them as a client module yourself.
+> **React Server Components:** the package is published with a `'use client'` directive, so you can import and render `MsgResourceProvider` and `MsgMessage` from server components and they become client components automatically. **Call `createMsgComponents` from a client module**, as in the example above: inside a `'use client'` module every export is a client reference, which a server component can render but can't call.
 
 ### Format with data and options
 
@@ -169,4 +169,4 @@ function MessageCount() {
 | --- | --- |
 | `npm test` | Run tests once |
 | `npm run test:watch` | Run tests in watch mode |
-| `npm run build` | Bundle ESM + CJS (and types) to `dist/` via tsup |
+| `npm run build` | Bundle ESM + CJS (and types) to `dist/` via tsup, then check that every bundle starts with `'use client'` (`postbuild`) |

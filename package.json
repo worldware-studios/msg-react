@@ -10,6 +10,7 @@
     "test:watch": "vitest",
     "coverage": "vitest --coverage",
     "build": "tsup && tsc -p tsconfig.build.json",
+    "postbuild": "node scripts/check-dist.mjs",
     "prepack": "npm run build"
   },
   "keywords": [
