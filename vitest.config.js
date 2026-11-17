@@ -7,5 +7,11 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     exclude: ['**/node_modules/**', '**/dist/**'],
+    // Type-level tests (*.test-d.tsx) are type-checked, not executed, on every
+    // `npm test` run, so CI catches typed-API regressions.
+    typecheck: {
+      enabled: true,
+      include: ['src/**/*.test-d.tsx'],
+    },
   },
 })

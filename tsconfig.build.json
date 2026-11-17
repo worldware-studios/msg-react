@@ -13,6 +13,8 @@
     "node_modules",
     "**/*.test.ts",
     "**/*.test.tsx",
+    "**/*.test-d.ts",
+    "**/*.test-d.tsx",
     "src/test/**/*"
   ]
 }
