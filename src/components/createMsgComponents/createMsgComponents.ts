@@ -1,13 +1,14 @@
 import type { JSX } from 'react';
 import type { MsgResource } from '@worldware/msg';
-import type { MsgMessageProps } from '../MsgMessage/index.js';
-import type { MsgProviderProps } from '../MsgResourceProvider/index.js';
+import { MsgMessage, type MsgMessageProps } from '../MsgMessage/index.js';
+import { MsgResourceProvider, type MsgProviderProps } from '../MsgResourceProvider/index.js';
 
 /**
- * The message key union of a `MsgResource` type.
- * Scaffold: always `string`; infers the resource's keys in the implementation.
+ * The message key union of a `MsgResource` type: `'a' | 'b'` for a resource
+ * created with `messages: [...] as const`, or `string` for an untyped one.
  */
-export type MsgKeyOf<R extends MsgResource> = string;
+export type MsgKeyOf<R extends MsgResource> =
+  R extends MsgResource<infer K> ? K : never;
 
 /** Provider and message components whose `msgKey` is checked against `K`. */
 export type MsgComponents<K extends string> = {
@@ -16,11 +17,21 @@ export type MsgComponents<K extends string> = {
 };
 
 /**
- * Returns `MsgResourceProvider` and `MsgMessage` typed to a resource's keys.
- * Scaffold: returns untyped components and throws at runtime.
+ * Returns `MsgResourceProvider` and `MsgMessage` typed to a resource's message
+ * keys, so a misspelled `msgKey` is a compile error.
+ *
+ * The returned components are the regular exports with narrower types; there
+ * is no runtime wrapper, and they share one context with the untyped ones. The
+ * argument is only used for type inference, so the explicit form
+ * `createMsgComponents<typeof resource>()` is equivalent.
+ *
+ * @param _resource - A resource whose key type to bind (optional).
+ * @typeParam R - The resource type; inferred from `_resource` when passed.
  */
 export function createMsgComponents<R extends MsgResource>(
   _resource?: R
-): MsgComponents<string> {
-  throw new Error('createMsgComponents is not implemented yet');
+): MsgComponents<MsgKeyOf<R>> {
+  // No casts needed: the untyped components accept every MsgResource<K> and
+  // every K extends string, so they are assignable to the typed signatures.
+  return { MsgResourceProvider, MsgMessage };
 }
