@@ -10,8 +10,7 @@ export const MsgResourceContext = createContext<MsgResource | null>(null)
  * @typeParam K - Message keys of the resource. Defaults to `string`.
  */
 export type MsgProviderProps<K extends string = string> = {
-  // Scaffold: still untyped; becomes MsgResource<K> in the implementation.
-  resource: MsgResource,
+  resource: MsgResource<K>,
   children: React.ReactNode
 }
 

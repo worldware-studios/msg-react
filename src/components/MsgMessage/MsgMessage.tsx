@@ -10,8 +10,7 @@ import { MsgResourceContext } from '../MsgResourceProvider/index.js'
  *   components from `createMsgComponents` narrow it to a resource's keys.
  */
 export type MsgMessageProps<K extends string = string> = {
-  // Scaffold: still `string`; narrowed to K in the implementation.
-  msgKey: string,
+  msgKey: K,
   data?: Record<string, any>,
   options?: MessageFormatOptions
 }
