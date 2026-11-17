@@ -5,7 +5,12 @@ import { MsgResource } from '@worldware/msg';
 
 export const MsgResourceContext = createContext<MsgResource | null>(null)
 
-type MsgProviderProps = {
+/**
+ * Props for {@link MsgResourceProvider}.
+ * @typeParam K - Message keys of the resource. Defaults to `string`.
+ */
+export type MsgProviderProps<K extends string = string> = {
+  // Scaffold: still untyped; becomes MsgResource<K> in the implementation.
   resource: MsgResource,
   children: React.ReactNode
 }

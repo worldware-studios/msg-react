@@ -4,7 +4,13 @@ import { useContext } from 'react';
 import { type MessageFormatOptions } from 'messageformat';
 import { MsgResourceContext } from '../MsgResourceProvider/index.js'
 
-type MsgMessageProps = {
+/**
+ * Props for {@link MsgMessage}.
+ * @typeParam K - Allowed message keys. Defaults to `string` (any key); typed
+ *   components from `createMsgComponents` narrow it to a resource's keys.
+ */
+export type MsgMessageProps<K extends string = string> = {
+  // Scaffold: still `string`; narrowed to K in the implementation.
   msgKey: string,
   data?: Record<string, any>,
   options?: MessageFormatOptions
