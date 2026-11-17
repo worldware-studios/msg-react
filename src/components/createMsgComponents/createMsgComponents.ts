@@ -25,11 +25,12 @@ export type MsgComponents<K extends string> = {
  * argument is only used for type inference, so the explicit form
  * `createMsgComponents<typeof resource>()` is equivalent.
  *
- * @param _resource - A resource whose key type to bind (optional).
- * @typeParam R - The resource type; inferred from `_resource` when passed.
+ * @param resource - A resource whose key type to bind (optional; used only
+ *   for type inference).
+ * @typeParam R - The resource type; inferred from `resource` when passed.
  */
 export function createMsgComponents<R extends MsgResource>(
-  _resource?: R
+  resource?: R
 ): MsgComponents<MsgKeyOf<R>> {
   // No casts needed: the untyped components accept every MsgResource<K> and
   // every K extends string, so they are assignable to the typed signatures.
